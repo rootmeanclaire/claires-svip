@@ -7,9 +7,10 @@ module uart_tb #(
 	reg enable;
 	reg clk;
 	reg[DATA_BITS-1:0] tx_input;
+	reg new_data;
 	// Outputs
-	output wire tx_wire;
-	output wire ready;
+	wire tx_wire;
+	wire ready;
 	// Test Variables
 	integer suite = 0;
 	integer test = 0;
@@ -33,6 +34,7 @@ module uart_tb #(
 		.enable(enable),
 		.clk(clk),
 		.tx_input(tx_input),
+		.new_data(new_data),
 		.tx_wire(tx_wire),
 		.ready(ready)
 	);
@@ -52,6 +54,7 @@ module uart_tb #(
 		$write("=== TEST SUITE %0d: BASICS ===\n", suite);
 		$write("\tTest %0d.%0d: No Input...", suite, test);
 		enable = 10'bxxxxxxxxxx;
+		new_data = 0;
 		expected = 10'b1111111111;
 
 		#10;

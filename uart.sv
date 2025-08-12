@@ -12,15 +12,28 @@ module uart #(
 	input wire clk,
 	// The data to transmit
 	input wire[DATA_BITS-1:0] tx_input,
+	// Set high when the contents of the input register are ready to be sent
+	// Cleared automatically when transmission begins
+	input wire new_data,
 	// The write to output the UART signal
 	output reg tx_wire,
 	// Indicates whether the module is ready to receive new data
-	output reg ready
+	output wire ready
 );
 	// Clock for the output signal
 	wire clk_uart;
 	// Index of the bit in the transmission stream
 	reg[3:0] i_bit;
+	enum {
+		// Not transmitting, ready to begin transmission
+		IDLE,
+		// Begin transmission
+		START,
+		// Send data bits
+		DATA,
+		// End transmission
+		STOP
+	} state;
 
 	// Divide down the system clock to the right frequency
 	clk_div #(
@@ -34,35 +47,37 @@ module uart #(
 	initial begin
 		// Idle high
 		tx_wire <= 1;
-		// Ready to transmit
-		ready <= 1;
 		// Transmission index at 0
 		i_bit <= 0;
 	end
 
-	always @(posedge clk_uart) begin
-		if (enable) begin
-			// If ready to start a new transmission
-			if (i_bit == 0 && ready) begin
-				ready <= 0;
-				i_bit <= 1;
-				tx_wire <= 0;
-			end
-			// If transmission in progress
-			else if (i_bit > 0 && ~ready) begin
-				// If data
-				if (i_bit < DATA_BITS - 1) begin
-					tx_wire = tx_input[i_bit];
-					i_bit = i_bit + 1;
-				end
-				// If stop bit
-				else begin
-					tx_wire <= 1;
-					ready <= 1;
-				end
-			end
-			// Else: A tranmission is being asked for, but must wait for the
-			// current transmission to finish
-		end
+	always @(posedge clk_uart && new_data) begin
+		state <= START;
 	end
+
+	always @(posedge clk_uart) begin
+		case (state)
+			START: begin
+				state <= DATA;
+				// Send start bit
+				tx_wire <= 0;
+				// Set bit position to LSB, first data bit
+				i_bit <= 0;
+			end
+			DATA: begin
+				// Write data bit onto the transmission line
+				tx_wire = tx_input[i_bit];
+				// Queue up index to next bit
+				i_bit++;
+				// All data bits transmitted
+				if (i_bit == DATA_BITS) state = STOP;
+			end
+			STOP: begin
+				state <= IDLE;
+				tx_wire <= 1;
+			end
+		endcase
+	end
+
+	assign ready = (state == IDLE);
 endmodule
