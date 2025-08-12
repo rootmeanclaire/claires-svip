@@ -19,7 +19,7 @@ all: test
 
 # Remove all generated files
 clean:
-	rm -f $(PROJ_NAME) $(JSON) $(BLIF) $(ASC) $(BIN)
+	rm -f $(TB_BIN)
 
 # Create testing binaries with icarus verilog
 build_tests: $(TB_BIN)
@@ -27,5 +27,7 @@ build_tests: $(TB_BIN)
 test: build_tests
 	$(foreach bin,$(TB_BIN),./$(bin);)
 %_tb: %_tb.sv %.v
+	iverilog -g2005-sv -o $@ $^
+%_tb: %_tb.sv %.sv
 	iverilog -g2005-sv -o $@ $^
 uart_tb: clk_div.v
