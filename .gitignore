@@ -1,0 +1,5 @@
+# Waveform Dumps
+*.vcd
+*.gtkw
+# Testbench Binaries
+*_tb
