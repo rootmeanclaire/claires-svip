@@ -45,18 +45,22 @@ module uart #(
 	);
 
 	initial begin
+		state <= IDLE;
 		// Idle high
 		tx_wire <= 1;
 		// Transmission index at 0
 		i_bit <= 0;
 	end
 
-	always @(posedge clk_uart && new_data) begin
+	always @(posedge new_data) begin
 		state <= START;
 	end
 
 	always @(posedge clk_uart) begin
 		case (state)
+			IDLE: begin
+				tx_wire <= 1;
+			end
 			START: begin
 				state <= DATA;
 				// Send start bit
@@ -74,7 +78,10 @@ module uart #(
 			end
 			STOP: begin
 				state <= IDLE;
-				tx_wire <= 1;
+				// Send stop bit
+				tx_wire <= 0;
+				// Reset bit counter
+				i_bit <= 0;
 			end
 		endcase
 	end
