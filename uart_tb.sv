@@ -147,6 +147,30 @@ module uart_tb #(
 			failed++;
 		end
 
+		test++;
+		$write("=== TEST SUITE %0d: BASICS ===\n", suite);
+		$write("\tTest %0d.%0d: Send 0xBE...", suite, test);
+		tx_input = 'hBE;
+		new_data = 1;
+		expected = {1'b0, tx_input, 1'b0};
+
+		#100_000
+		for (integer i = 0; i < DATA_BITS+2; i++) begin
+			// 1 / 9600 baud = 104167 ns
+			actual[i] = tx_wire;
+			#104167;
+		end
+		new_data = 0;
+		#1ms;
+
+		if (actual === expected) begin
+			$write("Passed!\n");
+			passed++;
+		end else begin
+			$write("Failed! (Expected %b, Got %b)\n", expected, actual);
+			failed++;
+		end
+
 		$write("\n=== ALL TESTS COMPLETED ===\n");
 		$write("Passed %0d / %0d tests\n", passed, passed + failed);
 		$finish;
