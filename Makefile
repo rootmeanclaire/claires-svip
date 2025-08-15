@@ -30,4 +30,4 @@ test: build_tests
 	iverilog -g2005-sv -o $@ $^
 %_tb: %_tb.sv %.sv
 	iverilog -g2005-sv -o $@ $^
-uart_tb: clk_div.v
+uart_tx_tb: clk_div.v
