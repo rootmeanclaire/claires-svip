@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module uart_tb #(
+module uart_tx_tb #(
 	parameter DATA_BITS = 8,
 	parameter BAUD = 9600
 );
@@ -22,12 +22,12 @@ module uart_tb #(
 
 	// Geneate log file
 	initial begin
-		$dumpfile("uart_tb.vcd");
+		$dumpfile("uart_tx_tb.vcd");
 		$dumpvars(0);
 	end
 
 	// Initialize unit under test
-	uart #(
+	uart_tx #(
 		.DATA_BITS(DATA_BITS),
 		.BAUD(BAUD),
 		.SYS_CLK(12000000)

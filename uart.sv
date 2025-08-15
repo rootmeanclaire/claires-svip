@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module uart #(
+module uart_tx #(
 	// Can be 5-9 for compliance with spec
 	parameter DATA_BITS = 8,
 	// Data transmission rate, bits per second
