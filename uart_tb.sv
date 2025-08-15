@@ -1,7 +1,8 @@
 `timescale 1ns / 1ps
 
 module uart_tb #(
-	parameter DATA_BITS = 8
+	parameter DATA_BITS = 8,
+	parameter BAUD = 9600
 );
 	// Inputs
 	reg enable;
@@ -28,7 +29,7 @@ module uart_tb #(
 	// Initialize unit under test
 	uart #(
 		.DATA_BITS(DATA_BITS),
-		.BAUD(9600),
+		.BAUD(BAUD),
 		.SYS_CLK(12000000)
 	) uut(
 		.enable(enable),
