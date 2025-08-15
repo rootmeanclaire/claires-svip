@@ -54,7 +54,7 @@ module uart_tb #(
 		test++;
 		$write("=== TEST SUITE %0d: BASICS ===\n", suite);
 		$write("\tTest %0d.%0d: No Input...", suite, test);
-		tx_input = 'hx;
+		tx_input = 'x;
 		new_data = 0;
 		expected = 10'b1111111111;
 
@@ -80,7 +80,7 @@ module uart_tb #(
 		$write("\tTest %0d.%0d: Send 0x00...", suite, test);
 		tx_input = 'h00;
 		new_data = 1;
-		expected = 10'b0000000000;
+		expected = {1'b0, tx_input, 1'b0};
 
 		#100_000
 		for (integer i = 0; i < DATA_BITS+2; i++) begin
@@ -104,7 +104,7 @@ module uart_tb #(
 		$write("\tTest %0d.%0d: Send 0x81...", suite, test);
 		tx_input = 'h81;
 		new_data = 1;
-		expected = 10'b0100000010;
+		expected = {1'b0, tx_input, 1'b0};
 
 		#100_000
 		for (integer i = 0; i < DATA_BITS+2; i++) begin
@@ -128,7 +128,7 @@ module uart_tb #(
 		$write("\tTest %0d.%0d: Send 0xA5...", suite, test);
 		tx_input = 'hA5;
 		new_data = 1;
-		expected = 10'b0101001010;
+		expected = {1'b0, tx_input, 1'b0};
 
 		#100_000
 		for (integer i = 0; i < DATA_BITS+2; i++) begin
