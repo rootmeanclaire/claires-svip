@@ -57,14 +57,14 @@ module uart_tb #(
 		new_data = 0;
 		expected = 10'b1111111111;
 
-		#10;
+		#100_000
 		for (integer i = 0; i < DATA_BITS+2; i++) begin
 			// 1 / 9600 baud = 104167 ns
 			actual[i] = tx_wire;
 			#104167;
 		end
 		new_data = 0;
-		#10;
+		#1ms;
 
 		if (actual === expected) begin
 			$write("Passed!\n");
@@ -81,13 +81,38 @@ module uart_tb #(
 		new_data = 1;
 		expected = 10'b0000000000;
 
-		#10;
+		#100_000
 		for (integer i = 0; i < DATA_BITS+2; i++) begin
 			// 1 / 9600 baud = 104167 ns
 			actual[i] = tx_wire;
 			#104167;
 		end
 		new_data = 0;
+		#1ms;
+
+		if (actual === expected) begin
+			$write("Passed!\n");
+			passed++;
+		end else begin
+			$write("Failed! (Expected %b, Got %b)\n", expected, actual);
+			failed++;
+		end
+
+		test++;
+		$write("=== TEST SUITE %0d: BASICS ===\n", suite);
+		$write("\tTest %0d.%0d: Send 0x81...", suite, test);
+		tx_input = 'h81;
+		new_data = 1;
+		expected = 10'b0100000010;
+
+		#100_000
+		for (integer i = 0; i < DATA_BITS+2; i++) begin
+			// 1 / 9600 baud = 104167 ns
+			actual[i] = tx_wire;
+			#104167;
+		end
+		new_data = 0;
+		#1ms;
 
 		if (actual === expected) begin
 			$write("Passed!\n");
@@ -104,13 +129,14 @@ module uart_tb #(
 		new_data = 1;
 		expected = 10'b0101001010;
 
-		#10;
+		#100_000
 		for (integer i = 0; i < DATA_BITS+2; i++) begin
 			// 1 / 9600 baud = 104167 ns
 			actual[i] = tx_wire;
 			#104167;
 		end
 		new_data = 0;
+		#1ms;
 
 		if (actual === expected) begin
 			$write("Passed!\n");
